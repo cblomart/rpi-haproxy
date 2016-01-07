@@ -36,12 +36,12 @@ The erase the sources and builds
 
 **Customizing Haproxy**
 
-> docker run -d -p 80:80 -v <dir>:/etc/haproxy cblomart/rpi-haproxy
+> docker run -d -p 80:80 -v \<dir\>:/etc/haproxy cblomart/rpi-haproxy
 
-where <dir> is an absolute path of a directory that could contain:
+where \<dir\> is an absolute path of a directory that could contain:
 
 You can get the default haproxy.cfg from a container:
 
-> docker cp <container>:/etc/haproxy/haproxy.cfg haproxy.cfg
+> docker cp \<container\>:/etc/haproxy/haproxy.cfg haproxy.cfg
 
 Logging is sent to 127.0.0.1 to avoid error accessing /dev/log socket device.
