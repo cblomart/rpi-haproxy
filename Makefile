@@ -16,8 +16,9 @@
 DOCKER_IMAGE_VERSION=0.0.1
 DOCKER_IMAGE_NAME=cblomart/rpi-haproxy
 DOCKER_IMAGE_TAGNAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION)
-OPENSSL_VERSION=1.0.2e
-HAPROXY_VERSION=1.6.3
+OPENSSL_VERSION=1.0.2h
+HAPROXY_VERSION=1.6.5
+HAPROXY_MAJOR=$(echo $HAPROXY_VERSION | sed 's/\.[0-9]*$//g')
 
 default: build
 
@@ -39,14 +40,14 @@ src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.
 	make -C src/openssl-$(OPENSSL_VERSION) install_sw
 
 src/haproxy-$(HAPROXY_VERSION).tar.gz: dirs
-	wget http://www.haproxy.org/download/1.6/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src
+	wget http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src
 
 src/haproxy-: src/haproxy-$(HAPROXY_VERSION).tar.gz
 	tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src
 
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/haproxy-$(HAPROXY_VERSION) src/openssl-$(OPENSSL_VERSION)/libssl.a
 	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=native USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 ADDINC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ ADDLIB=-L$(PWD)/src/openssl-$(OPENSSL_VERSION)/ -ldl
-	strip --strip-all src/haproxy-1.6.3/haproxy
+	strip --strip-all src/haproxy-$(HAPROXY_VERSION)/haproxy
 
 build: src/haproxy-$(HAPROXY_VERSION)/haproxy dirs
 	sudo mv src/haproxy-$(HAPROXY_VERSION)/haproxy /usr/local/bin/
@@ -62,7 +63,7 @@ clean:
 
 deps:
 	sudo apt-get install -y build-essential zlib1g-dev libpcre3-dev libssl-dev python-pip
-	sudo pip install https://github.com/larsks/dockerize/archive/master.zip 
+	sudo pip install dockerize 
 
 push:
 	docker push $(DOCKER_IMAGE_NAME)
