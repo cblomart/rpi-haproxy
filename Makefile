@@ -36,7 +36,7 @@ src/openssl-$(OPENSSL_VERSION)/openssl.spec: src/openssl-$(OPENSSL_VERSION)
 	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv5 ./config --prefix=../../ssl no-shared no-zlib no-krb5 no-test
 
 src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.spec
-    make -C src/openssl-$(OPENSSL_VERSION) depend
+	make -C src/openssl-$(OPENSSL_VERSION) depend
 	make -C src/openssl-$(OPENSSL_VERSION)
 
 src/haproxy-$(HAPROXY_VERSION).tar.gz: dirs
