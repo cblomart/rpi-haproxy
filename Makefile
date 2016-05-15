@@ -42,7 +42,7 @@ src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.
 src/haproxy-$(HAPROXY_VERSION).tar.gz: dirs
 	wget http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src
 
-src/haproxy-: src/haproxy-$(HAPROXY_VERSION).tar.gz
+src/haproxy-$(HAPROXY_VERSION): src/haproxy-$(HAPROXY_VERSION).tar.gz
 	tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src
 
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/haproxy-$(HAPROXY_VERSION) src/openssl-$(OPENSSL_VERSION)/libssl.a
