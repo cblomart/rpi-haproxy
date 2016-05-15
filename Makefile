@@ -33,7 +33,7 @@ src/openssl-$(OPENSSL_VERSION): src/openssl-$(OPENSSL_VERSION).tar.gz
 
 
 src/openssl-$(OPENSSL_VERSION)/openssl.spec: src/openssl-$(OPENSSL_VERSION)
-	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv5 ./config --prefix=../../ssl no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-dh no-engine -static
+	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv5 ./config --prefix=../../ssl no-dso no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-dso no-engines no-hw no-apps no-comp no-err no-srp -static
 
 src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.spec
 	make -C src/openssl-$(OPENSSL_VERSION) depend
@@ -46,7 +46,7 @@ src/haproxy-$(HAPROXY_VERSION): src/haproxy-$(HAPROXY_VERSION).tar.gz
 	tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src
 
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/haproxy-$(HAPROXY_VERSION) src/openssl-$(OPENSSL_VERSION)/libssl.a
-	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=native USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 ADDINC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ ADDLIB=-L$(PWD)/src/openssl-$(OPENSSL_VERSION)/ -ldl
+	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=armv5 USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 ADDINC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ ADDLIB=-L$(PWD)/src/openssl-$(OPENSSL_VERSION)/ -ldl
 	strip --strip-all src/haproxy-$(HAPROXY_VERSION)/haproxy
 
 build: src/haproxy-$(HAPROXY_VERSION)/haproxy dirs
