@@ -33,7 +33,7 @@ src/openssl-$(OPENSSL_VERSION): src/openssl-$(OPENSSL_VERSION).tar.gz
 
 
 src/openssl-$(OPENSSL_VERSION)/openssl.spec: src/openssl-$(OPENSSL_VERSION)
-	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv5 ./config --prefix=../../ssl no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-md5 no-dh no-engine -static
+	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv5 ./config --prefix=../../ssl no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-dh no-engine -static
 
 src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.spec
 	make -C src/openssl-$(OPENSSL_VERSION) depend
