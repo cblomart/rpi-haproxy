@@ -13,7 +13,7 @@
 #
 
 
-DOCKER_IMAGE_VERSION=0.0.1
+DOCKER_IMAGE_VERSION=0.0.2
 DOCKER_IMAGE_NAME=cblomart/rpi-haproxy
 DOCKER_IMAGE_TAGNAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION)
 OPENSSL_VERSION=1.0.2h
@@ -23,7 +23,7 @@ HAPROXY_MAJOR=1.6
 default: build
 
 dirs:
-	mkdir src tmp
+	mkdir -p src tmp
 
 src/openssl-$(OPENSSL_VERSION).tar.gz: dirs
 	wget ftp://ftp.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -P src
@@ -37,7 +37,7 @@ src/openssl-$(OPENSSL_VERSION)/openssl.spec: src/openssl-$(OPENSSL_VERSION)
 
 src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.spec
 	make -C src/openssl-$(OPENSSL_VERSION) depend
-	make -C src/openssl-$(OPENSSL_VERSION)
+	make -C src/openssl-$(OPENSSL_VERSION) build_libs
 
 src/haproxy-$(HAPROXY_VERSION).tar.gz: dirs
 	wget http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src
@@ -46,8 +46,9 @@ src/haproxy-$(HAPROXY_VERSION): src/haproxy-$(HAPROXY_VERSION).tar.gz
 	tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src
 
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/haproxy-$(HAPROXY_VERSION) src/openssl-$(OPENSSL_VERSION)/libssl.a
-	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=armv5 USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 ADDINC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ ADDLIB=-L$(PWD)/src/openssl-$(OPENSSL_VERSION)/ -ldl
+	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=armv5 USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 ADDINC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/
 	strip --strip-all src/haproxy-$(HAPROXY_VERSION)/haproxy
+	upx src/haproxy-$(HAPROXY_VERSION)/haproxy
 
 build: src/haproxy-$(HAPROXY_VERSION)/haproxy dirs
 	sudo mv src/haproxy-$(HAPROXY_VERSION)/haproxy /usr/local/bin/
