@@ -1,6 +1,6 @@
 build:
   image: resin/rpi-raspbian:jessie
-  commads:
+  commands:
     - pwd
     - make deps
     - make binary
