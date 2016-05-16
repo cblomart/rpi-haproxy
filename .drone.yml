@@ -2,6 +2,7 @@ build:
   image: resin/rpi-raspbian:jessie
   commands:
     - pwd
+    - apt-get update
     - apt-get install make
     - make deps
     - make binary
