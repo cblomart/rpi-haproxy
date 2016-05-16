@@ -76,7 +76,7 @@ build-clean:
 	make -C src/openssl-$(OPENSSL_VERSION) clean
 
 deps:
-	sudo apt-get install -y build-essential zlib1g-dev libpcre3-dev libssl-dev python-pip
+	sudo apt-get install -y build-essential  python-pip
 	sudo pip install dockerize
 
 push:
