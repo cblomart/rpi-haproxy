@@ -1,6 +1,7 @@
 build
   image: resin/rpi-raspbian:jessie
   commads:
+    - pwd
     - make deps
     - make binary
-
+    - ls -lah ./src/haproxy-*/haproxy
