@@ -17,42 +17,48 @@ DOCKER_IMAGE_VERSION=0.0.2
 DOCKER_IMAGE_NAME=cblomart/rpi-haproxy
 DOCKER_IMAGE_TAGNAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION)
 OPENSSL_VERSION=1.0.2h
-HAPROXY_VERSION=1.6.5
 HAPROXY_MAJOR=1.6
+HAPROXY_MINOR=5
+HAPROXY_VERSION=$(HAPROXY_MAJOR).$(HAPROXY_MINOR)
+ZLIB_VERSION=1.2.8
+PCRE_VERSION=8.38
 
 default: build
 
-dirs:
-	mkdir -p src tmp
-
-src/openssl-$(OPENSSL_VERSION).tar.gz: dirs
-	wget ftp://ftp.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -P src
-
-src/openssl-$(OPENSSL_VERSION): src/openssl-$(OPENSSL_VERSION).tar.gz
-	tar -zxf src/openssl-$(OPENSSL_VERSION).tar.gz -C src
-
-
-src/openssl-$(OPENSSL_VERSION)/openssl.spec: src/openssl-$(OPENSSL_VERSION)
+src/openssl-$(OPENSSL_VERSION)/libssl.a:
+	mkdir -p src
+	if [ ! -e src/openssl-$(OPENSSL_VERSION).tar.gz ]; then echo "!! Downloading OpenSSL !!";  wget ftp://ftp.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -P src; fi
+	if [ ! -d tar -zxf src/openssl-$(OPENSSL_VERSION) ]; then echo "!! Extracting OpenSSL !!"; tar -zxf src/openssl-$(OPENSSL_VERSION).tar.gz -C src; fi
 	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv5 ./config --prefix=../../ssl no-dso no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-dso no-engines no-hw no-apps no-comp no-err no-srp -static
-
-src/openssl-$(OPENSSL_VERSION)/libssl.a: src/openssl-$(OPENSSL_VERSION)/openssl.spec
 	make -C src/openssl-$(OPENSSL_VERSION) depend
 	make -C src/openssl-$(OPENSSL_VERSION) build_libs
 
-src/haproxy-$(HAPROXY_VERSION).tar.gz: dirs
-	wget http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src
+src/zlib-$(ZLIB_VERSION)/libz.a:
+	mkdir -p src
+	if [ ! -e src/zlib-$(ZLIB_VERSION).tar.gz ]; then echo "!! Downloading zlib !!"; wget http://zlib.net/zlib-$(ZLIB_VERSION).tar.gz -P src; fi
+	if [ ! -d src/zlib-$(ZLIB_VERSION) ]; then echo "!! Extracting zlib !!";  tar -zxf src/zlib-$(ZLIB_VERSION).tar.gz -C src; fi
+	cd src/zlib-$(ZLIB_VERSION); CFLAGS='-march=armv5 -O3' ./configure --static
+	make -C src/zlib-$(ZLIB_VERSION)
 
-src/haproxy-$(HAPROXY_VERSION): src/haproxy-$(HAPROXY_VERSION).tar.gz
-	tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src
+src/pcre-$(PCRE_VERSION)/libpcre.la:
+	mkdir -p src
+	if [ ! -e src/pcre-$(PCRE_VERSION).tar.gz]; then echo "!! Downloading PCRE !!"; wget http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$(PCRE_VERSION).tar.gz -P src; fi
+	if [ ! -d src/pcre-$(PCRE_VERSION) ]; then echo "!! Extracting PCRE !!"; tar -zxf src/pcre-$(PCRE_VERSION).tar.gz -C src; fi
+	cd src/pcre-$(PCRE_VERSION); CFLAGS='-O3 -Wall -static -march=armv5' ./configure --disable-shared
+	make -C src/pcre-$(PCRE_VERSION) libpcre.la
 
-src/haproxy-$(HAPROXY_VERSION)/haproxy: src/haproxy-$(HAPROXY_VERSION) src/openssl-$(OPENSSL_VERSION)/libssl.a
-	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=armv5 USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 ADDINC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/
-	strip --strip-all src/haproxy-$(HAPROXY_VERSION)/haproxy
-	upx src/haproxy-$(HAPROXY_VERSION)/haproxy
+src/haproxy-$(HAPROXY_VERSION)/haproxy: src/openssl-$(OPENSSL_VERSION)/libssl.a src/zlib-$(ZLIB_VERSION)/libz.a src/pcre-$(PCRE_VERSION)/libpcre.la
+	mkdir -p src
+	if [ ! -e src/haproxy-$(HAPROXY_VERSION).tar.gz ]; then echo "!! Downloading HAProxy !!"; wget http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src; fi
+	if [ ! -e src/haproxy-$(HAPROXY_VERSION) ]; then echo "!! Extracting HAProxy !!"; tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src; fi
+	make -C src/haproxy-$(HAPROXY_VERSION) TARGET=linux2628 CPU=armv5 USE_LIBCRYPT= USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 SSL_INC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ SSL_LIB=$(PWD)/src/openssl-$(OPENSSL_VERSION)/ ZLIB_INC=$(PWD)/src/zlib-$(ZLIB_VERSION)/ ZLIB_LIB=$(PWD)/src/zlib-$(ZLIB_VERSION)/ PCRE_INC=$(PWD)/src/pcre-$(PCRE_VERSION)/ PCRE_LIB=$(PWD)/src/pcre-$(PCRE_VERSION)/
 
-build: src/haproxy-$(HAPROXY_VERSION)/haproxy dirs
-	sudo mv src/haproxy-$(HAPROXY_VERSION)/haproxy /usr/local/bin/
+binary: src/haproxy-$(HAPROXY_VERSION)/haproxy
+
+build: src/haproxy-$(HAPROXY_VERSION)/haproxy
+	mv src/haproxy-$(HAPROXY_VERSION)/haproxy /usr/local/bin/
 	dockerize -t $(DOCKER_IMAGE_NAME) -a haproxy.cfg /etc/haproxy/ --entrypoint "/usr/local/bin/haproxy -f /etc/haproxy/haproxy.cfg" /usr/local/bin/haproxy
+	mkdir -p tmp
 	cp Dockerfile tmp/
 	docker build -t $(DOCKER_IMAGE_NAME) tmp
 	docker tag -f $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_NAME):latest
@@ -62,12 +68,18 @@ clean:
 	rm -rf src
 	rm -rf tmp
 
+build-clean:
+	make -C src/haproxy-$(HAPROXY_VERSION) clean
+	make -C src/pcre-$(PCRE_VERSION) clean
+	make -C src/zlib-$(ZLIB_VERSION) clean
+	make -C src/openssl-$(OPENSSL_VERSION) clean
+
 deps:
 	sudo apt-get install -y build-essential zlib1g-dev libpcre3-dev libssl-dev python-pip
-	sudo pip install dockerize 
+	sudo pip install dockerize
 
 push:
 	docker push $(DOCKER_IMAGE_NAME)
 
 test:
-	docker run --rm $(DOCKER_IMAGE_NAME) -vv	
+	docker run --rm $(DOCKER_IMAGE_NAME) -vv
