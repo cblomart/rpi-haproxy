@@ -1,4 +1,4 @@
-build
+build:
   image: resin/rpi-raspbian:jessie
   commads:
     - pwd
