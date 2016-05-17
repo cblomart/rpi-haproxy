@@ -1,5 +1,7 @@
 build:
   image: cblomart/rpi-buildroot
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
   commands:
     - make deps
     - make binary
