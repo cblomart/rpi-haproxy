@@ -1,6 +1,21 @@
 build:
-  image: cblomart/rpi-buildroot
+  image: cblomart/rpi-basebuild
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
   commands:
     - make deps
     - make binary
     - ls -lah ./src/haproxy-*/haproxy
+    - strip --strip-all ./src/haproxy-*/haproxy
+    - make
+publish:
+  docker:
+    username: cblomart
+    password: $$DOCKERHUB_PASS
+    email: cblomart@gmail.com
+    repo: cblomart/rpi-haproxy
+    insecure: true
+    tag:
+       - $$BRANCH
+       - latest
+
