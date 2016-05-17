@@ -9,8 +9,8 @@ build:
   commands:
     - make deps
     - make binary
-    - ls -lah ./src/haproxy-*/haproxy
     - strip --strip-all ./src/haproxy-*/haproxy
+    - ldd  ./src/haproxy-*/haproxy
     - make
 publish:
   docker:
