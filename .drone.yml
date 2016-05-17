@@ -1,5 +1,5 @@
 build:
-  image: cblomart/buildroot
+  image: cblomart/rpi-buildroot
   commands:
     - make deps
     - make binary
