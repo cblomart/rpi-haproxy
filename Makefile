@@ -27,7 +27,6 @@ CFLAGS=-march=armv6 -O3 -marm -mfpu=vfp -mfloat-abi=hard -O3
 default: build
 
 src/openssl-$(OPENSSL_VERSION)/libssl.a:
-	mkdir -p src
 	if [ ! -e src/openssl-$(OPENSSL_VERSION).tar.gz ]; then echo "!! Downloading OpenSSL !!";  wget -q ftp://ftp.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -P src; fi
 	if [ ! -d src/openssl-$(OPENSSL_VERSION) ]; then echo "!! Extracting OpenSSL !!"; tar -zxf src/openssl-$(OPENSSL_VERSION).tar.gz -C src; fi
 	cd src/openssl-$(OPENSSL_VERSION) && MACHINE=armv6 ./config  no-dso no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-dso no-engines no-hw no-apps no-comp no-err no-srp -static $(CFLAGS)
@@ -35,21 +34,18 @@ src/openssl-$(OPENSSL_VERSION)/libssl.a:
 	make -C src/openssl-$(OPENSSL_VERSION) build_libs
 
 src/zlib-$(ZLIB_VERSION)/libz.a:
-	mkdir -p src
 	if [ ! -e src/zlib-$(ZLIB_VERSION).tar.gz ]; then echo "!! Downloading zlib !!"; wget -q http://zlib.net/zlib-$(ZLIB_VERSION).tar.gz -P src; fi
 	if [ ! -d src/zlib-$(ZLIB_VERSION) ]; then echo "!! Extracting zlib !!";  tar -zxf src/zlib-$(ZLIB_VERSION).tar.gz -C src; fi
 	cd src/zlib-$(ZLIB_VERSION); CFLAGS="$(CFLAGS)" ./configure --static
 	make -C src/zlib-$(ZLIB_VERSION)
 
 src/pcre-$(PCRE_VERSION)/libpcre.la:
-	mkdir -p src
 	if [ ! -e src/pcre-$(PCRE_VERSION).tar.gz ]; then echo "!! Downloading PCRE !!"; wget -q http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$(PCRE_VERSION).tar.gz -P src; fi
 	if [ ! -d src/pcre-$(PCRE_VERSION) ]; then echo "!! Extracting PCRE !!"; tar -zxf src/pcre-$(PCRE_VERSION).tar.gz -C src; fi
 	cd src/pcre-$(PCRE_VERSION); CFLAGS="$(CFLAGS)" ./configure --disable-shared --disable-cpp
 	make -C src/pcre-$(PCRE_VERSION) libpcre.la
 
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/openssl-$(OPENSSL_VERSION)/libssl.a src/zlib-$(ZLIB_VERSION)/libz.a src/pcre-$(PCRE_VERSION)/libpcre.la
-	mkdir -p src
 	if [ ! -e src/haproxy-$(HAPROXY_VERSION).tar.gz ]; then echo "!! Downloading HAProxy !!"; wget -q http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src; fi
 	if [ ! -e src/haproxy-$(HAPROXY_VERSION) ]; then echo "!! Extracting HAProxy !!"; tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src; fi
 	make -C src/haproxy-$(HAPROXY_VERSION) CFLAGS="$(CFLAGS)" TARGET=linux2628 CPU=armv6 USE_LIBCRYPT= USE_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 SSL_INC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ SSL_LIB=$(PWD)/src/openssl-$(OPENSSL_VERSION)/ ZLIB_INC=$(PWD)/src/zlib-$(ZLIB_VERSION)/ ZLIB_LIB=$(PWD)/src/zlib-$(ZLIB_VERSION)/ PCRE_INC=$(PWD)/src/pcre-$(PCRE_VERSION)/ PCRE_LIB=$(PWD)/src/pcre-$(PCRE_VERSION)/
@@ -76,7 +72,7 @@ build-clean:
 	make -C src/openssl-$(OPENSSL_VERSION) clean
 
 deps:
-	sudo apt-get install -y build-essential  python-pip
+	sudo apt-get install -y build-essential  python-pip libpcre3-dev
 	sudo pip install dockerize
 
 push:
