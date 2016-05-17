@@ -72,6 +72,7 @@ build-clean:
 	make -C src/openssl-$(OPENSSL_VERSION) clean
 
 deps:
+	sudo apt-get update
 	sudo apt-get install -y build-essential  python-pip libpcre3-dev
 	sudo pip install dockerize
 
