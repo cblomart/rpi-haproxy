@@ -1,9 +1,5 @@
 build:
-<<<<<<< HEAD
   image: cblomart/rpi-basebuild
-=======
-  image: cblomart/rpi-buildroot
->>>>>>> d4dec08344aa453c3f54758b2fdbea7845f99a45
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
   commands:
