@@ -22,6 +22,7 @@ HAPROXY_MINOR=5
 HAPROXY_VERSION=$(HAPROXY_MAJOR).$(HAPROXY_MINOR)
 ZLIB_VERSION=1.2.8
 PCRE_VERSION=8.38
+CC=musl-gcc
 CFLAGS=-march=armv6 -O3 -marm -mfpu=vfp -mfloat-abi=hard -O3
 
 default: build
