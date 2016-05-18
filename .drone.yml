@@ -20,5 +20,4 @@ publish:
     insecure: true
     tag:
        - $$BRANCH
-       - latest
 
