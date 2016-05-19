@@ -54,6 +54,7 @@ src/pcre-$(PCRE_VERSION)/libpcre.la:
 	if [ ! -d src/pcre-$(PCRE_VERSION) ]; then echo "!! Extracting PCRE !!"; tar -zxf src/pcre-$(PCRE_VERSION).tar.gz -C src; fi
 	cd src/pcre-$(PCRE_VERSION); CC=$(CC) CFLAGS="$(CFLAGS)" ./configure --disable-shared --disable-cpp --enable-jit
 	make -j 2 -C src/pcre-$(PCRE_VERSION) libpcre.la
+	cd src/pcre-$(PCRE_VERSION); ls -R .libs
 
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/openssl-$(OPENSSL_VERSION)/libssl.a src/zlib-$(ZLIB_VERSION)/libz.a src/pcre-$(PCRE_VERSION)/libpcre.la
 	if [ ! -e src/haproxy-$(HAPROXY_VERSION).tar.gz ]; then echo "!! Downloading HAProxy !!"; wget -q http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src; fi
