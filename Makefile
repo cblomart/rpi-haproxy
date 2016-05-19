@@ -38,7 +38,8 @@ default: build
 src/libressl-$(LIBRESSL_VERSION)/libssl.a:
 	if [ ! -e src/libressl-$(LIBRESSL_VERSION).tar.gz ]; then echo "!! Downloading LibreSSL !!"; wget http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-${LIBRESSL_VERSION}.tar.gz -P src; fi
 	if [ ! -d src/libressl-$(LIBRESSL_VERSION) ]; then echo "!! Extracting FreeSSL !!"; tar -zxf src/libressl-$(LIBRESSL_VERSION).tar.gz -C src; fi
-	cd src/libressl-$(LIBRESSL_VERSION) && CC=$(CC) CFLAGS="$(CFLAGS)" ./configure --disable-shared
+	cd src/libressl-$(LIBRESSL_VERSION) && CC=$(CC) CFLAGS="$(CFLAGS)" ./configure --enable-shared=no
+	cd src/libressl-$(LIBRESSL_VERSION); sed -i '/sysctl\.h/d' ./crypto/compat/getentropy_linux.c
 	make -C src/libressl-$(LIBRESSL_VERSION)
 
 src/zlib-$(ZLIB_VERSION)/libz.a:
