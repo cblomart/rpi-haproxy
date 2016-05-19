@@ -40,6 +40,7 @@ src/libressl-$(LIBRESSL_VERSION)/libssl.a:
 	if [ ! -d src/libressl-$(LIBRESSL_VERSION) ]; then echo "!! Extracting FreeSSL !!"; tar -zxf src/libressl-$(LIBRESSL_VERSION).tar.gz -C src; fi
 	cd src/libressl-$(LIBRESSL_VERSION) && CC=$(CC) CFLAGS="$(CFLAGS)" ./configure --enable-shared=no
 	cd src/libressl-$(LIBRESSL_VERSION); sed -i '/sysctl\.h/d' ./crypto/compat/getentropy_linux.c
+	cd src/libressl-$(LIBRESSL_VERSION); sed -i 's!linux/types.h!sys/types.h!g' ./crypto/compat/getentropy_linux.c
 	make -C src/libressl-$(LIBRESSL_VERSION)
 
 src/zlib-$(ZLIB_VERSION)/libz.a:
