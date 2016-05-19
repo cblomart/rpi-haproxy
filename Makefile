@@ -58,7 +58,7 @@ src/pcre-$(PCRE_VERSION)/libpcre.la:
 src/haproxy-$(HAPROXY_VERSION)/haproxy: src/openssl-$(OPENSSL_VERSION)/libssl.a src/zlib-$(ZLIB_VERSION)/libz.a src/pcre-$(PCRE_VERSION)/libpcre.la
 	if [ ! -e src/haproxy-$(HAPROXY_VERSION).tar.gz ]; then echo "!! Downloading HAProxy !!"; wget -q http://www.haproxy.org/download/$(HAPROXY_MAJOR)/src/haproxy-$(HAPROXY_VERSION).tar.gz -P src; fi
 	if [ ! -e src/haproxy-$(HAPROXY_VERSION) ]; then echo "!! Extracting HAProxy !!"; tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src; fi
-	make -j 2 -C src/haproxy-$(HAPROXY_VERSION) CC=$(CC) CFLAGS="$(CFLAGS)" TARGET=linux2628 CPU=armv6 USE_TPROXY= USE_DL= USE_POLL= USE_PCRE_JIT=1 USE_LIBCRYPT= USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 SSL_INC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ SSL_LIB=$(PWD)/src/openssl-$(OPENSSL_VERSION)/ ZLIB_INC=$(PWD)/src/zlib-$(ZLIB_VERSION)/ ZLIB_LIB=$(PWD)/src/zlib-$(ZLIB_VERSION)/ PCRE_INC=$(PWD)/src/pcre-$(PCRE_VERSION)/ PCRE_LIB=$(PWD)/src/pcre-$(PCRE_VERSION)/.libs/
+	make -j 2 -C src/haproxy-$(HAPROXY_VERSION) CC=$(CC) CFLAGS="$(CFLAGS)" TARGET=linux2628 CPU=armv6 USE_FUTEX= USE_TPROXY= USE_DL= USE_POLL= USE_PCRE_JIT=1 USE_LIBCRYPT= USE_STATIC_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 SSL_INC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ SSL_LIB=$(PWD)/src/openssl-$(OPENSSL_VERSION)/ ZLIB_INC=$(PWD)/src/zlib-$(ZLIB_VERSION)/ ZLIB_LIB=$(PWD)/src/zlib-$(ZLIB_VERSION)/ PCRE_INC=$(PWD)/src/pcre-$(PCRE_VERSION)/ PCRE_LIB=$(PWD)/src/pcre-$(PCRE_VERSION)/.libs/
 
 binary: src/haproxy-$(HAPROXY_VERSION)/haproxy
 
