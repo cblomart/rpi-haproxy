@@ -19,4 +19,17 @@ publish:
     insecure: true
     tag:
        - $$BRANCH
-
+  bintray:
+    username: cblomart
+    password: $$DOCKERHUB_PASS
+    branch: $$BRANCH
+    artifacts:
+      - file:  /usr/local/bin/
+        owner: cblomart
+        type: executable
+        repository: files
+        package: haproxy
+        version: 1.6.5
+        target: haproxy
+        publish: true
+        override: true
