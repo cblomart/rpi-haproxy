@@ -16,6 +16,7 @@ publish:
        - $$BRANCH
        - $$COMMIT
   bintray:
+    image: cblomart/rpi-drone-bintray
     username: cblomart
     password: $$DOCKERHUB_PASS
     branch: $$BRANCH
