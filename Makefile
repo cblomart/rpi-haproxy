@@ -62,7 +62,7 @@ src/haproxy-$(HAPROXY_VERSION)/haproxy: src/openssl-$(OPENSSL_VERSION)/libssl.a 
 	make -j 2 -C src/haproxy-$(HAPROXY_VERSION) CC=$(CC) LDFLAGS="$(CFLAGS) -static" TARGET=linux2628 CPU=armv6 USE_FUTEX= USE_TPROXY= USE_DL= USE_POLL= USE_PCRE_JIT=1 USE_LIBCRYPT= USE_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 SSL_INC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ SSL_LIB=$(PWD)/src/openssl-$(OPENSSL_VERSION)/ ZLIB_INC=$(PWD)/src/zlib-$(ZLIB_VERSION)/ ZLIB_LIB=$(PWD)/src/zlib-$(ZLIB_VERSION)/ PCRE_INC=$(PWD)/src/pcre-$(PCRE_VERSION)/ PCRE_LIB=$(PWD)/src/pcre-$(PCRE_VERSION)/.libs/ haproxy
 
 build: src/haproxy-$(HAPROXY_VERSION)/haproxy
-	cp ./src/haproxy-$(HAPROXY_VERSION)/haproxy
+	cp ./src/haproxy-$(HAPROXY_VERSION)/haproxy ./haproxy
 	strip --strip-all ./haproxy
 
 clean:
