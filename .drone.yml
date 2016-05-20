@@ -3,12 +3,8 @@ build:
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
   commands:
-    - make binary
-    - ls -lah ./src/haproxy-*/haproxy
-    - strip --strip-all ./src/haproxy-*/haproxy
-    - ls -lah ./src/haproxy-*/haproxy
-    - ./src/haproxy-*/haproxy -vv
-    - make
+    - make 
+    - docker build -t cblomart/rpi-haproxy .
 publish:
   docker:
     username: cblomart
@@ -18,6 +14,7 @@ publish:
     insecure: true
     tag:
        - $$BRANCH
+       - $$COMMIT
   bintray:
     username: cblomart
     password: $$DOCKERHUB_PASS

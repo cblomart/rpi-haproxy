@@ -61,16 +61,9 @@ src/haproxy-$(HAPROXY_VERSION)/haproxy: src/openssl-$(OPENSSL_VERSION)/libssl.a 
 	if [ ! -e src/haproxy-$(HAPROXY_VERSION) ]; then echo "!! Extracting HAProxy !!"; tar -zxf src/haproxy-$(HAPROXY_VERSION).tar.gz -C src; fi
 	make -j 2 -C src/haproxy-$(HAPROXY_VERSION) CC=$(CC) LDFLAGS="$(CFLAGS) -static" TARGET=linux2628 CPU=armv6 USE_FUTEX= USE_TPROXY= USE_DL= USE_POLL= USE_PCRE_JIT=1 USE_LIBCRYPT= USE_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1 SSL_INC=$(PWD)/src/openssl-$(OPENSSL_VERSION)/include/ SSL_LIB=$(PWD)/src/openssl-$(OPENSSL_VERSION)/ ZLIB_INC=$(PWD)/src/zlib-$(ZLIB_VERSION)/ ZLIB_LIB=$(PWD)/src/zlib-$(ZLIB_VERSION)/ PCRE_INC=$(PWD)/src/pcre-$(PCRE_VERSION)/ PCRE_LIB=$(PWD)/src/pcre-$(PCRE_VERSION)/.libs/ haproxy
 
-binary: src/haproxy-$(HAPROXY_VERSION)/haproxy
-
 build: src/haproxy-$(HAPROXY_VERSION)/haproxy
-	mv src/haproxy-$(HAPROXY_VERSION)/haproxy /usr/local/bin/
-	dockerize -t $(DOCKER_IMAGE_NAME) -a haproxy.cfg /etc/haproxy/ --entrypoint "/usr/local/bin/haproxy -f /etc/haproxy/haproxy.cfg" /usr/local/bin/haproxy
-	mkdir -p tmp
-	cp Dockerfile tmp/
-	docker build -t $(DOCKER_IMAGE_NAME) tmp
-	docker tag -f $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_NAME):latest
-	docker tag -f $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_TAGNAME)
+	cp ./src/haproxy-$(HAPROXY_VERSION)/haproxy
+	strip --strip-all ./haproxy
 
 clean:
 	rm -rf src
