@@ -18,10 +18,11 @@ publish:
   bintray:
     image: cblomart/rpi-drone-bintray
     username: cblomart
-    password: $$DOCKERHUB_PASS
+    password: $$BINTRAY_PASS
+    api_key: $$BINTRAY_API
     branch: $$BRANCH
     artifacts:
-      - file:  /usr/local/bin/
+      - file:  haproxy
         owner: cblomart
         type: executable
         repository: files
