@@ -20,6 +20,7 @@ publish:
     username: cblomart
     password: $$DOCKERHUB_PASS
     branch: $$BRANCH
+    api_key: 8a30bf4edfccaa3b8520d37431b4dc2f8fd11e00
     artifacts:
       - file:  haproxy
         owner: cblomart
