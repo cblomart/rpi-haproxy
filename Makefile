@@ -26,13 +26,14 @@ ZLIB_VERSION=1.2.8
 PCRE_VERSION=8.38
 CC=musl-gcc
 CFLAGS=-march=armv6 -O3 -marm -mfpu=vfp -mfloat-abi=hard -O3
+DISABLED_CIPHERS=no-camillia no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-seed no-bf no-cast no-ripemd no-mdc2 no-dsa no-ecdsa
 
 default: build
 
 src/openssl-$(OPENSSL_VERSION)/libssl.a:
 	if [ ! -e src/openssl-$(OPENSSL_VERSION).tar.gz ]; then echo "!! Downloading OpenSSL !!";  wget -q ftp://ftp.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -P src; fi
 	if [ ! -d src/openssl-$(OPENSSL_VERSION) ]; then echo "!! Extracting OpenSSL !!"; tar -zxf src/openssl-$(OPENSSL_VERSION).tar.gz -C src; fi
-	cd src/openssl-$(OPENSSL_VERSION) && CC=$(CC) MACHINE=armv6 ./config  no-camillia no-dso no-shared no-zlib no-krb5 no-test no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-dso no-engines no-hw no-apps no-comp no-err no-srp no-asm-static $(CFLAGS)
+	cd src/openssl-$(OPENSSL_VERSION) && CC=$(CC) MACHINE=armv6 ./config $(DISABLED_CIPHERS) no-dso no-shared no-zlib no-krb5 no-test  no-dso no-engines no-hw no-apps no-comp no-err no-srp no-asm-static $(CFLAGS)
 	make -j 2 -C src/openssl-$(OPENSSL_VERSION) depend
 	make -j 2 -C src/openssl-$(OPENSSL_VERSION) build_libs
 
