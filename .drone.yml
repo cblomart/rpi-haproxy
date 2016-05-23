@@ -15,6 +15,7 @@ publish:
     tag:
        - $$BRANCH
        - $$COMMIT
+       - latest
   bintray:
     image: cblomart/rpi-drone-bintray
     username: cblomart
