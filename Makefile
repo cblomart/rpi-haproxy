@@ -12,6 +12,7 @@
 #
 # or you could use the deps target of the makefile
 #
+# REM: musl for truely static compilation + disabled ciphers for time
 
 
 DOCKER_IMAGE_VERSION=0.0.2
