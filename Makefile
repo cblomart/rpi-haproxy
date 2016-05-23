@@ -27,7 +27,7 @@ ZLIB_VERSION=1.2.8
 PCRE_VERSION=8.38
 CC=musl-gcc
 CFLAGS=-march=armv6 -O3 -marm -mfpu=vfp -mfloat-abi=hard -O3
-DISABLED_CIPHERS=no-camillia no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-seed no-bf no-cast no-ripemd no-mdc2 no-dsa no-ecdsa
+DISABLED_CIPHERS=no-camillia no-rc4 no-md2 no-md4 no-idea no-ssl2 no-ssl3 no-seed no-bf no-cast no-ripemd no-mdc2
 
 default: build
 
