@@ -1,6 +1,8 @@
 # rpi-haproxy
 
-This image is build form a (mostly) staticaly compiled haproxy via dockerize. Thus reducing the size of the image to 4MB.
+This image is build form a staticaly compiled haproxy via dockerize. Thus reducing the size of the image to 4MB.
+
+To staticaly compile without libc dependencies, musl is used. Additionnaly many ciphers were remiived.
 
 Many thanks to hypriots for its work and posts... it obviously inspired most of this work.
 
